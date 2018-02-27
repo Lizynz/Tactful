@@ -1,6 +1,11 @@
 #import <UIKit/UIKit.h>
 #include <substrate.h>
 
+@interface SBUIAppIconForceTouchControllerDataProvider : NSObject // iOS 10 -11
+@property (nonatomic, readonly) NSString *applicationBundleIdentifier;
+@property (nonatomic, readonly) NSArray *applicationShortcutItems;
+@end
+
 @interface SBApplication : NSObject
 @property (nonatomic,copy) NSArray *dynamicShortcutItems;
 -(NSString *)bundleIdentifier;
@@ -19,50 +24,14 @@
 @end
 
 @interface SBSApplicationShortcutItem : NSObject
-@property (nonatomic,copy) NSString *type;
-@property (nonatomic,copy) NSString *localizedTitle;
-@property (nonatomic,copy) NSString *localizedSubtitle;
-@property (nonatomic,copy) SBSApplicationShortcutIcon *icon;
-@property (nonatomic,copy) NSDictionary *userInfo;
+- (void)setBundleIdentifierToLaunch:(id)arg1;
+- (void)setIcon:(id)arg1;
+- (void)setLocalizedSubtitle:(id)arg1;
+- (void)setLocalizedTitle:(id)arg1;
+- (void)setType:(id)arg1;
+- (void)setUserInfo:(id)arg1;
+- (void)setUserInfoData:(id)arg1;
 @end
-
-@interface SBApplicationShortcutMenu : NSObject
-@property(retain, nonatomic) SBApplication *application;
-@end
-
-#ifndef __LP64__
-
-@interface UIApplicationShortcutItem : NSObject
-@property (nonatomic, copy, readonly) NSString *type;
-@property (nonatomic, copy, readonly) NSString *localizedTitle;
-@property (nonatomic, copy, readonly) NSString *localizedSubtitle;
-@end
-
-@protocol UIViewControllerPreviewing <NSObject>
-@property (nonatomic, readonly) UIView *sourceView;
-@property (nonatomic) CGRect sourceRect;
-@end
-
-@protocol UIViewControllerPreviewingDelegate <NSObject>
-- (UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location;
-- (void)previewingContext:(id <UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit;
-@end
-
-@interface UITraitCollection : NSObject
-@property (nonatomic, readonly) NSInteger forceTouchCapability;
-@end
-
-@interface UIViewController (iOS9)
-@property (nonatomic,readonly) UITraitCollection * traitCollection;
--(void)showViewController:(UIViewController *)viewController sender:(id)sender;
--(void)registerForPreviewingWithDelegate:(id)delegate sourceView:(UIView *)view;
-@end
-
-@interface UIPreviewAction
-+ (instancetype)actionWithTitle:(NSString *)title style:(NSInteger)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler;
-@end
-
-#endif
 
 @interface CydiaTabBarController : UITabBarController
 @end
@@ -229,42 +198,46 @@
 %end
 
 %group SpringBoard
-%hook SBApplicationShortcutMenu
+%hook SBUIAppIconForceTouchControllerDataProvider
 
--(NSArray *)_shortcutItemsToDisplay {
-  NSMutableArray *items = [%orig mutableCopy] ?: [NSMutableArray array];
-  if ([[self.application bundleIdentifier] isEqualToString:@"com.saurik.Cydia"]) {
-    SBSApplicationShortcutItem *searchItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-    [searchItem setType:@"tactful_search"];
-    [searchItem setLocalizedTitle:@"Search Cydia"];
-    SBSApplicationShortcutSystemIcon *searchIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-    searchIcon = [searchIcon initWithType:5]; //UIApplicationShortcutIconTypeSearch
-    [searchItem setIcon:searchIcon];
-    [items addObject:searchItem];
+- (id)applicationShortcutItems { //iOS 10 - 11
 
-    SBSApplicationShortcutItem *recentInstallationItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-    [recentInstallationItem setType:@"tactful_recent"];
-    [recentInstallationItem setLocalizedTitle:@"Recent Installations"];
-    SBSApplicationShortcutSystemIcon *installIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-    installIcon = [installIcon initWithType:0]; //UIApplicationShortcutIconTypeCompose
-    [recentInstallationItem setIcon:installIcon];
-    [items addObject:recentInstallationItem];
+	NSArray *applicationShortcutItems = %orig;
+	NSMutableArray *items = [NSMutableArray arrayWithArray:applicationShortcutItems];
 
-    SBSApplicationShortcutItem *addRepoItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-    [addRepoItem setType:@"tactful_addrepo"];
-    [addRepoItem setLocalizedTitle:@"Add Repo"];
-    SBSApplicationShortcutSystemIcon *addRepoIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-    addRepoIcon = [addRepoIcon initWithType:3]; //UIApplicationShortcutIconTypeAdd
-    [addRepoItem setIcon:addRepoIcon];
-    [items addObject:addRepoItem];
+  if ([self.applicationBundleIdentifier isEqualToString:@"com.saurik.Cydia"]) {
 
-    SBSApplicationShortcutItem *refreshReposItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-    [refreshReposItem setType:@"tactful_refreshrepo"];
-    [refreshReposItem setLocalizedTitle:@"Refresh Repos"];
-    SBSApplicationShortcutSystemIcon *refreshReposIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-    refreshReposIcon = [refreshReposIcon initWithType:6]; //UIApplicationShortcutIconTypeAdd
-    [refreshReposItem setIcon:refreshReposIcon];
-    [items addObject:refreshReposItem];
+		SBSApplicationShortcutItem *searchItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+		[searchItem setType:@"tactful_search"];
+		[searchItem setLocalizedTitle:@"Search Cydia"];
+		SBSApplicationShortcutSystemIcon *searchIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+		searchIcon = [searchIcon initWithType:5]; //UIApplicationShortcutIconTypeSearch
+		[searchItem setIcon:searchIcon];
+		[items addObject:searchItem];
+
+		SBSApplicationShortcutItem *recentInstallationItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+		[recentInstallationItem setType:@"tactful_recent"];
+		[recentInstallationItem setLocalizedTitle:@"Recent Installations"];
+		SBSApplicationShortcutSystemIcon *installIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+		installIcon = [installIcon initWithType:0]; //UIApplicationShortcutIconTypeCompose
+		[recentInstallationItem setIcon:installIcon];
+		[items addObject:recentInstallationItem];
+
+		SBSApplicationShortcutItem *addRepoItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+		[addRepoItem setType:@"tactful_addrepo"];
+		[addRepoItem setLocalizedTitle:@"Add Repo"];
+		SBSApplicationShortcutSystemIcon *addRepoIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+		addRepoIcon = [addRepoIcon initWithType:3]; //UIApplicationShortcutIconTypeAdd
+		[addRepoItem setIcon:addRepoIcon];
+		[items addObject:addRepoItem];
+
+		SBSApplicationShortcutItem *refreshReposItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+		[refreshReposItem setType:@"tactful_refreshrepo"];
+		[refreshReposItem setLocalizedTitle:@"Refresh Repos"];
+		SBSApplicationShortcutSystemIcon *refreshReposIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+		refreshReposIcon = [refreshReposIcon initWithType:6]; //UIApplicationShortcutIconTypeAdd
+		[refreshReposItem setIcon:refreshReposIcon];
+		[items addObject:refreshReposItem];
 
   }
   return [items copy];
