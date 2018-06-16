@@ -126,7 +126,7 @@ static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Applica
   if (package == nil) {
     return @[];
   }
-  UIPreviewAction *packageAction = [%c(UIPreviewAction) actionWithTitle:([package uninstalled] ? ([package isCommercial] ? @"Purchase" : @"Install") : @"Remove") style:0 handler:^(UIPreviewAction *action, UIViewController *viewController) {
+  UIPreviewAction *packageAction = [%c(UIPreviewAction) actionWithTitle:([package uninstalled] ? ([package isCommercial] ? LOCALIZED(@"Purchase") : LOCALIZED(@"Install")) : LOCALIZED(@"Remove")) style:0 handler:^(UIPreviewAction *action, UIViewController *viewController) {
     if ([package uninstalled]) {
       [package install];
     } else if ([package isCommercial]) {
