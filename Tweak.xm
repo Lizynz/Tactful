@@ -1,6 +1,9 @@
 #import <UIKit/UIKit.h>
 #include <substrate.h>
 
+static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Application Support/Tactful/Localizations.bundle"];
+#define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
+
 @interface SBUIAppIconForceTouchControllerDataProvider : NSObject // iOS 10 -11
 @property (nonatomic, readonly) NSString *applicationBundleIdentifier;
 @property (nonatomic, readonly) NSArray *applicationShortcutItems;
@@ -207,37 +210,37 @@
 
   if ([self.applicationBundleIdentifier isEqualToString:@"com.saurik.Cydia"]) {
 
-		SBSApplicationShortcutItem *searchItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-		[searchItem setType:@"tactful_search"];
-		[searchItem setLocalizedTitle:@"Search Cydia"];
-		SBSApplicationShortcutSystemIcon *searchIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-		searchIcon = [searchIcon initWithType:5]; //UIApplicationShortcutIconTypeSearch
-		[searchItem setIcon:searchIcon];
-		[items addObject:searchItem];
+    SBSApplicationShortcutItem *refreshReposItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+    [refreshReposItem setType:@"tactful_refreshrepo"];
+    [refreshReposItem setLocalizedTitle:LOCALIZED(@"Refresh Repos")];
+    SBSApplicationShortcutSystemIcon *refreshReposIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+    refreshReposIcon = [refreshReposIcon initWithType:15]; //UIApplicationShortcutIconTypeConfirmation
+    [refreshReposItem setIcon:refreshReposIcon];
+    [items addObject:refreshReposItem];
 
-		SBSApplicationShortcutItem *recentInstallationItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-		[recentInstallationItem setType:@"tactful_recent"];
-		[recentInstallationItem setLocalizedTitle:@"Recent Installations"];
-		SBSApplicationShortcutSystemIcon *installIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-		installIcon = [installIcon initWithType:0]; //UIApplicationShortcutIconTypeCompose
-		[recentInstallationItem setIcon:installIcon];
-		[items addObject:recentInstallationItem];
+    SBSApplicationShortcutItem *addRepoItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+    [addRepoItem setType:@"tactful_addrepo"];
+    [addRepoItem setLocalizedTitle:LOCALIZED(@"Add Repo")];
+    SBSApplicationShortcutSystemIcon *addRepoIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+    addRepoIcon = [addRepoIcon initWithType:3]; //UIApplicationShortcutIconTypeAdd
+    [addRepoItem setIcon:addRepoIcon];
+    [items addObject:addRepoItem];
 
-		SBSApplicationShortcutItem *addRepoItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-		[addRepoItem setType:@"tactful_addrepo"];
-		[addRepoItem setLocalizedTitle:@"Add Repo"];
-		SBSApplicationShortcutSystemIcon *addRepoIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-		addRepoIcon = [addRepoIcon initWithType:3]; //UIApplicationShortcutIconTypeAdd
-		[addRepoItem setIcon:addRepoIcon];
-		[items addObject:addRepoItem];
+    SBSApplicationShortcutItem *searchItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+    [searchItem setType:@"tactful_search"];
+    [searchItem setLocalizedTitle:LOCALIZED(@"Search Cydia")];
+    SBSApplicationShortcutSystemIcon *searchIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+    searchIcon = [searchIcon initWithType:5]; //UIApplicationShortcutIconTypeSearch
+    [searchItem setIcon:searchIcon];
+    [items addObject:searchItem];
 
-		SBSApplicationShortcutItem *refreshReposItem = [[%c(SBSApplicationShortcutItem) alloc] init];
-		[refreshReposItem setType:@"tactful_refreshrepo"];
-		[refreshReposItem setLocalizedTitle:@"Refresh Repos"];
-		SBSApplicationShortcutSystemIcon *refreshReposIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
-		refreshReposIcon = [refreshReposIcon initWithType:6]; //UIApplicationShortcutIconTypeAdd
-		[refreshReposItem setIcon:refreshReposIcon];
-		[items addObject:refreshReposItem];
+    SBSApplicationShortcutItem *recentInstallationItem = [[%c(SBSApplicationShortcutItem) alloc] init];
+    [recentInstallationItem setType:@"tactful_recent"];
+    [recentInstallationItem setLocalizedTitle:LOCALIZED(@"Recent Installations")];
+    SBSApplicationShortcutSystemIcon *installIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
+    installIcon = [installIcon initWithType:14]; //UIApplicationShortcutIconTypeInvitation
+    [recentInstallationItem setIcon:installIcon];
+    [items addObject:recentInstallationItem];
 
   }
   return [items copy];
