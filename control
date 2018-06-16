@@ -3,7 +3,7 @@ Name: Tactful
 Depends: mobilesubstrate
 Version: 1.2
 Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
+Description: 3D Functionality for Cydia (iOS 10.x ~ 11.x)
 Maintainer: Janosch
 Author: Janosch
 Section: Tweaks
