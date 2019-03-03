@@ -67,7 +67,6 @@ static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Applica
 -(void)handleShortcutItem:(UIApplicationShortcutItem *)item;
 @end
 
-%group Cydia
 %hook PackageListController
 
 -(void)viewDidLoad {
@@ -118,6 +117,7 @@ static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Applica
 }
 
 %end
+
 %hook CYPackageController
 
 %new
@@ -198,9 +198,7 @@ static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Applica
 }
 
 %end
-%end
 
-%group SpringBoard
 %hook SBUIAppIconForceTouchControllerDataProvider
 
 - (id)applicationShortcutItems { //iOS 10 - 11
@@ -247,13 +245,3 @@ static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Applica
 }
 
 %end
-%end
-
-%ctor {
-  NSString *processName = [[NSProcessInfo processInfo] processName];
-  if ([processName isEqualToString:@"SpringBoard"]) {
-    %init(SpringBoard);
-  } else if ([processName isEqualToString:@"Cydia"]) {
-    %init(Cydia);
-  }
-}
