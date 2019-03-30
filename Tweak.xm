@@ -188,7 +188,7 @@ static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Applica
           }
         }
       } else if ([item.type isEqualToString:@"tactful_addrepo"]) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"cydia://sources/add"]];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"cydia://sources/add"] options:@{} completionHandler:nil];
       } else if ([item.type isEqualToString:@"tactful_refreshrepo"]) {
         [tabBarController setSelectedIndex:2];
         [self requestUpdate];
