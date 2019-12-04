@@ -4,14 +4,9 @@
 static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Application Support/Tactful/Localizations.bundle"];
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
 
-@interface SBUIAppIconForceTouchControllerDataProvider : NSObject // iOS 10 -11
-@property (nonatomic, readonly) NSString *applicationBundleIdentifier;
-@property (nonatomic, readonly) NSArray *applicationShortcutItems;
-@end
-
-@interface SBApplication : NSObject
-@property (nonatomic,copy) NSArray *dynamicShortcutItems;
--(NSString *)bundleIdentifier;
+@interface SBIconView : NSObject
+- (NSString*)applicationBundleIdentifier;
+- (NSString*)applicationBundleIdentifierForShortcuts;
 @end
 
 @interface SBSApplicationShortcutIcon : NSObject
@@ -199,49 +194,54 @@ static const NSBundle *tweakBundle = [NSBundle bundleWithPath:@"/Library/Applica
 
 %end
 
-%hook SBUIAppIconForceTouchControllerDataProvider
+%hook SBIconView
 
-- (id)applicationShortcutItems { //iOS 10 - 11
+- (NSArray *)applicationShortcutItems {
+          NSArray *applicationShortcutItems = %orig;
+	  NSMutableArray *items = [NSMutableArray arrayWithArray:applicationShortcutItems];
 
-	NSArray *applicationShortcutItems = %orig;
-	NSMutableArray *items = [NSMutableArray arrayWithArray:applicationShortcutItems];
+if ([self.applicationBundleIdentifierForShortcuts isEqualToString:@"com.saurik.Cydia"]) {
 
-  if ([self.applicationBundleIdentifier isEqualToString:@"com.saurik.Cydia"]) {
-
+//1
     SBSApplicationShortcutItem *refreshReposItem = [[%c(SBSApplicationShortcutItem) alloc] init];
     [refreshReposItem setType:@"tactful_refreshrepo"];
     [refreshReposItem setLocalizedTitle:LOCALIZED(@"Refresh Repos")];
+    
     SBSApplicationShortcutSystemIcon *refreshReposIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
     refreshReposIcon = [refreshReposIcon initWithType:15]; //UIApplicationShortcutIconTypeConfirmation
     [refreshReposItem setIcon:refreshReposIcon];
     [items addObject:refreshReposItem];
-
+//2
     SBSApplicationShortcutItem *addRepoItem = [[%c(SBSApplicationShortcutItem) alloc] init];
     [addRepoItem setType:@"tactful_addrepo"];
     [addRepoItem setLocalizedTitle:LOCALIZED(@"Add Repo")];
+    
     SBSApplicationShortcutSystemIcon *addRepoIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
     addRepoIcon = [addRepoIcon initWithType:3]; //UIApplicationShortcutIconTypeAdd
     [addRepoItem setIcon:addRepoIcon];
     [items addObject:addRepoItem];
-
+//3
     SBSApplicationShortcutItem *searchItem = [[%c(SBSApplicationShortcutItem) alloc] init];
     [searchItem setType:@"tactful_search"];
     [searchItem setLocalizedTitle:LOCALIZED(@"Search Cydia")];
+    
     SBSApplicationShortcutSystemIcon *searchIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
     searchIcon = [searchIcon initWithType:5]; //UIApplicationShortcutIconTypeSearch
     [searchItem setIcon:searchIcon];
     [items addObject:searchItem];
-
+//4
     SBSApplicationShortcutItem *recentInstallationItem = [[%c(SBSApplicationShortcutItem) alloc] init];
     [recentInstallationItem setType:@"tactful_recent"];
     [recentInstallationItem setLocalizedTitle:LOCALIZED(@"Recent Installations")];
+    
     SBSApplicationShortcutSystemIcon *installIcon = [%c(SBSApplicationShortcutSystemIcon) alloc];
     installIcon = [installIcon initWithType:14]; //UIApplicationShortcutIconTypeInvitation
     [recentInstallationItem setIcon:installIcon];
     [items addObject:recentInstallationItem];
 
-  }
-  return [items copy];
+    }
+
+    return [items copy];
 }
 
 %end

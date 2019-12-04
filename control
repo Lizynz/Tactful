@@ -1,9 +1,9 @@
 Package: com.sharedroutine.tactful
 Name: Tactful
-Depends: mobilesubstrate
+Depends: mobilesubstrate, firmware (>= 13.0)
 Version: 1.2
 Architecture: iphoneos-arm
-Description: 3D Functionality for Cydia (iOS 10.x ~ 12.x)
+Description: 3D Functionality for Cydia (iOS 13.x)
 Maintainer: Janosch
 Author: Janosch
 Section: Tweaks

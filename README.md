@@ -1,4 +1,4 @@
 # Tactful
 
-- 3D Functionality for Cydia
-- Support for all devices iOS 10.x - iOS 11.x - iOS 12.x
+- 3D touch functionality for Cydia (full work only on devices with 3d touch)
+- Support for all devices iOS 13.x
